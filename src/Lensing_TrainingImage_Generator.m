@@ -13,20 +13,20 @@ rng(random_seed)
 zLENS = 0.5;
 zSOURCE = 2.00;
 
-h=0.71;
-OmegaC=0.222;
-OmegaLambda=0.734;
+h=0.71; %Reduced Hubble Constant
+OmegaC=0.222;       %Dark matter density
+OmegaLambda=0.734; %Dark energy density
 sigNORM=0.801;
-OmegaBaryon=0.0449;
-OmegaM=OmegaC+OmegaBaryon;
-c = 2.998E8; G = 6.67259E-11;  Msun= 1.98892e30;
-pc = 3.0857E16; kpc=1e3*pc; Mpc=1e6*pc;
-H0=100*h*(1000/Mpc); %in units of 1/s
-rhocrit=(3*H0^2)/(8*pi*G);   %SI:  kg/m^3
-H=100*h;
-Ds = (1e-6) * AngularDiameter(0,zSOURCE);    %in Mpc
-Dd = (1e-6) * AngularDiameter(0,zLENS);    %in Mpc
-Dds = (1e-6) * AngularDiameter(zLENS,zSOURCE);    %in Mpc
+OmegaBaryon=0.0449; %Baryon density
+OmegaM=OmegaC+OmegaBaryon; %Matter density
+c = 2.998E8; G = 6.67259E-11;  Msun= 1.98892e30;  %If you don't know what these are you shouldn't be here
+pc = 3.0857E16; kpc=1e3*pc; Mpc=1e6*pc; %Parsec, Kiloparsec, and MegaParsec
+H0=100*h*(1000/Mpc); %in units of 1/s 
+rhocrit=(3*H0^2)/(8*pi*G);   %SI:  kg/m^3 critical mass density to make the universe collapse I think
+H=100*h; 
+Ds = (1e-6) * AngularDiameter(0,zSOURCE);    %in Mpc Distance to source
+Dd = (1e-6) * AngularDiameter(0,zLENS);    %in Mpc Distance to lens
+Dds = (1e-6) * AngularDiameter(zLENS,zSOURCE);    %in Mpc Distance from lens to source
 
 
 
