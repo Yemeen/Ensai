@@ -15,7 +15,8 @@ zLENS = 0.5;
 zSOURCE = 2.00;
 
 h=0.71; %Reduced Hubble Constant
-OmegaC=0.222;       %Dark matter density
+OmegaC=0.
+222;       %Dark matter density
 OmegaLambda=0.734; %Dark energy density
 sigNORM=0.801;
 OmegaBaryon=0.0449; %Baryon density
@@ -61,7 +62,7 @@ src_pars = zeros(nsample,4);
 magnification = zeros(nsample,1);
 
 % datapath = getenv('Ensai_lens_training_dataset_path');
-datapath = [getenv('LOCAL_SCRATCH') '/SAURON/ARCS_2/'];
+datapath = [getenv('LOCAL_SCRATCH') './SAURON/ARCS_2/'];
 galaxy_image_path = [getenv('LOCAL_SCRATCH') './Small_Galaxy_Zoo/'];
 mkdir(datapath)
 file_list = ls(galaxy_image_path);
