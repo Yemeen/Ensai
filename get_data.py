@@ -1,14 +1,14 @@
 Y_all_train=[[],[],[]]
 Y_all_test =[[],[],[]]
 
-Y_all_train[0] = np.loadtxt(arcs_data_path_1 + '/parameters_train.txt')
-Y_all_test[0] = np.loadtxt(test_data_path_1 + '/parameters_test.txt')
+Y_all_train[0] = np.loadtxt(arcs_data_path_1 + 'parameters_train.txt')
+Y_all_test[0] = np.loadtxt(test_data_path_1 + 'parameters_test.txt')
 
-Y_all_train[1] = np.loadtxt(arcs_data_path_2 + '/parameters_train.txt')
-Y_all_test[1] = np.loadtxt(test_data_path_2 + '/parameters_test.txt')
+Y_all_train[1] = np.loadtxt(arcs_data_path_2 + 'parameters_train.txt')
+Y_all_test[1] = np.loadtxt(test_data_path_2 + 'parameters_test.txt')
 
-Y_all_train[2] = np.loadtxt(arcs_data_path_3 + '/parameters_train.txt')
-Y_all_test[2] = np.loadtxt(test_data_path_3 + '/parameters_test.txt')
+Y_all_train[2] = np.loadtxt(arcs_data_path_3 + 'parameters_train.txt')
+Y_all_test[2] = np.loadtxt(test_data_path_3 + 'parameters_test.txt')
 
 
 R_n = np.loadtxt( 'data/PS_4_real.txt')
@@ -126,7 +126,7 @@ def add_poisson_noise(im,apply_prob=1):
 def add_cosmic_ray(im,apply_prob=1):
 	rand_state = np.random.get_state()
 	if np.random.uniform()<= apply_prob:
-		inds_cr = np.random.randint(0, high = 10000)
+		inds_cr = np.random.randint(0, high = 10000-2)
 		filename_cr =  CRay_data_path + 'cosmicray_' + "%07d" % (inds_cr+1) + '.png'
 		CR_MAP = np.array(Image.open(filename_cr),dtype='float32').reshape(numpix_side*numpix_side,)/255.0
 		if np.max(CR_MAP)>0.1 and np.min(CR_MAP)<0.1:

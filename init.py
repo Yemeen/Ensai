@@ -7,6 +7,7 @@ from scipy.interpolate import RectBivariateSpline
 import numpy as np
 import numpy.matlib as ml
 import random
+import math
 import time
 import os
 import gc
@@ -48,22 +49,22 @@ min_unmasked_flux = 0.75
 
 
 
-#number of folders containing training or test data. If all 3 point to the same folder that's OK (only that folder will be used).
+#number of folders containing training or test dat If all 3 point to the same folder that's OK (only that folder will be used).
 global num_data_dirs
 num_data_dirs = 3
 
-num_training_samples = 100000
-max_num_test_samples = 1000
-arcs_data_path_1 = 'data/SAURON_TEST/'
-arcs_data_path_2 = 'data/SAURON_TEST/'
-arcs_data_path_3 = 'data/SAURON_TEST/'
+num_training_samples = 10000
+max_num_test_samples = 100
+arcs_data_path_1 = 'data/SAURON/ARCS_5/'
+arcs_data_path_2 = 'data/SAURON/ARCS_5/'
+arcs_data_path_3 = 'data/SAURON/ARCS_5/'
 test_data_path_1 = 'data/SAURON_TEST/'
 test_data_path_2 = 'data/SAURON_TEST/'
 test_data_path_3 = 'data/SAURON_TEST/'
 
-lens_data_path_1 = 'data/SAURON_TEST/'
-lens_data_path_2 = 'data/SAURON_TEST/'
-lens_data_path_3 = 'data/SAURON_TEST/'
+lens_data_path_1 = 'data/SAURON/ARCS_5/'
+lens_data_path_2 = 'data/SAURON/ARCS_5/'
+lens_data_path_3 = 'data/SAURON/ARCS_5/'
 testlens_data_path_1 = 'data/SAURON_TEST/'
 testlens_data_path_2 = 'data/SAURON_TEST/'
 testlens_data_path_3 = 'data/SAURON_TEST/'
@@ -126,12 +127,14 @@ with tf.variable_scope("ENSAI"):
 	with tf.variable_scope("EN_Model11"):
 		with slim.arg_scope(arg_scope):
 			y_mod.insert(10,  inception_v4( input_tensor , num_classes = 5 , dropout_keep_prob=1.0 , is_training=False,create_aux_logits=False) )
+			y_mod.insert( 11 , model_10(x_image,scope="EN_Model10"  ))
+	y_mod.insert( 12 , model_13(x_image,scope="EN_Model13"  ))
 
 
 #chose model: 5:OverFeat, 8:our made-up model, 9:AlexNet, 11:Inception.v4. Defaults to AlexNet if nothing specified 
 if 'model_num' not in locals():
-	print "No model selected. Selecting default model (9: AlexNet)."
-	model_num = 9
+	print "No model selected. Selecting default model (13: Meenie)."
+	model_num = 13
 y_conv = y_mod[model_num-1] 
 
 
@@ -140,13 +143,13 @@ variables_to_save =  slim.get_variables(scope="ENSAI/EN_Model" + str(model_num) 
 variables_to_restore = variables_to_save   #list of variables to restore (same as save here)
 train_pars = variables_to_save  #list of parameters to train
 
-
+#execfile("single_model_predictions.py")
 
 save_file =  "data/trained_weights/model_" + str(model_num) + ".ckpt"     #path of file to save
 restore_file = save_file   #path of network weights file to restore from
 
 RESTORE = True
-SAVE = False
+SAVE = True
 restorer = tf.train.Saver(variables_to_restore)
 saver = tf.train.Saver(variables_to_save)
 

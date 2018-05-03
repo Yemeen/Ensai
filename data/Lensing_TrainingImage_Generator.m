@@ -15,8 +15,7 @@ zLENS = 0.5;
 zSOURCE = 2.00;
 
 h=0.71; %Reduced Hubble Constant
-OmegaC=0.
-222;       %Dark matter density
+OmegaC=0.222;       %Dark matter density
 OmegaLambda=0.734; %Dark energy density
 sigNORM=0.801;
 OmegaBaryon=0.0449; %Baryon density
@@ -61,8 +60,9 @@ YLENS = zeros(nsample,1);
 src_pars = zeros(nsample,4);
 magnification = zeros(nsample,1);
 
+
 % datapath = getenv('Ensai_lens_training_dataset_path');
-datapath = [getenv('LOCAL_SCRATCH') './SAURON/ARCS_2/'];
+datapath = [getenv('LOCAL_SCRATCH') './SAURON/ARCS_5/'];
 galaxy_image_path = [getenv('LOCAL_SCRATCH') './Small_Galaxy_Zoo/'];
 mkdir(datapath)
 file_list = ls(galaxy_image_path);
@@ -72,13 +72,13 @@ file_names(1)=[];
 n_GalZoo_sample = numel(file_names);
 file_inds = 1:numel(file_names);
 src_numpix = 212;
-LOCAL_SCRAn_source_sample = n_GalZoo_sample;
+n_source_sample = n_GalZoo_sample;
 
 %load([getenv('SCRATCH') '/GREAT_gal_ims.mat'],'gal_ims');
 %n_source_sample = numel(gal_ims);
 
 disp('loading...')
-load([getenv('LOCAL_SCRATCH') './GREAT_IMS30.mat'],'GREAT_IMS');
+load([getenv('LOCAL_SCRATCH') './GREAT_IMS32.mat'],'GREAT_IMS');
 n_source_sample = size(GREAT_IMS,1)
 
 disp('done')

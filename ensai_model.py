@@ -341,6 +341,67 @@ def model_10(net, scope="EN_Model10", reuse=None):
                         net = tf.reshape(net,[-1,5])
                         return net
 
+#Yemeen's cases
+
+#(Kitt Peak) Model
+def model_13(net, scope="EN_Model13", reuse=None):
+        with tf.variable_scope(scope):
+                with slim.arg_scope([slim.conv2d], padding = 'SAME', activation_fn=tf.nn.relu,  stride=1):
+
+
+			MASK = tf.abs(tf.sign(net))
+			XX =  net +  ( (1-MASK) * 1000.0)
+			bias_measure_filt = tf.constant((1.0/16.0), shape=[4, 4, 1, 1])
+			bias_measure = tf.nn.conv2d( XX , bias_measure_filt , strides=[1, 1, 1, 1], padding='VALID')
+			im_bias = tf.reshape( tf.reduce_min(bias_measure,axis=[1,2,3]) , [-1,1,1,1] )
+			net = net - (im_bias * MASK )
+
+
+
+                        net = slim.conv2d(net, 64, [2, 2] , scope='conv1')
+                        net = slim.max_pool2d(net, [2, 2], scope='pool1')
+
+                        net = slim.conv2d(net, 64, [2, 2] , scope='conv2')
+                        net = slim.max_pool2d(net, [2, 2], scope='pool2')
+
+                        net = slim.conv2d(net, 64, [2, 2], scope='conv3')
+                        net = slim.max_pool2d(net, [2, 2], scope='pool3')
+
+                        net = slim.conv2d(net, 128, [3, 3], scope='conv4')
+                        net = slim.max_pool2d(net, [2, 2], scope='pool4')
+
+                        net = slim.conv2d(net, 128, [3, 3], scope='conv5')
+                        net = slim.max_pool2d(net, [2, 2], scope='pool5')
+
+			net = slim.conv2d(net, 256, [3, 3], scope='conv6')
+
+                        net = slim.flatten(net, scope='Flatten')
+                        net = slim.fully_connected(net, 1024 , activation_fn = tf.tanh ,  scope='FC1')
+			net = slim.fully_connected(net, 128 , activation_fn = tf.tanh ,  scope='FC2')
+                        net = slim.fully_connected(net,  5  , activation_fn = None ,  scope='FC3')
+                        net = tf.reshape(net,[-1,5])
+                        return net
+
+#Meenie Model
+def model_14(net, scope="EN_Model14", reuse=None):
+        with tf.variable_scope(scope):
+            net = slim.flatten(net, scope='Flatten')
+            net = slim.fully_connected(net, 256 , activation_fn = tf.nn.relu ,  scope='FC1')
+            net = slim.fully_connected(net,  128  , activation_fn = tf.nn.relu ,  scope='FC2')
+            net = slim.fully_connected(net,  5  , activation_fn = None ,  scope='FC3')
+            net = tf.reshape(net,[-1,5])
+        return net
+
+# only 2 fully connected layers
+# def model_7(net, scope="EN_Model7", reuse=None):
+#         with tf.variable_scope(scope):
+#         net = slim.flatten(net, scope='Flatten')
+#         net = slim.fully_connected(net, 128 , activation_fn = tf.nn.relu ,  scope='FC1')
+#         net = slim.fully_connected(net,  64  , activation_fn = tf.nn.relu ,  scope='FC2')
+#         net = slim.fully_connected(net,  5  , activation_fn = None ,  scope='FC3')
+#         net = tf.reshape(net,[-1,5])
+#         return net
+
 
 def cost_tensor(y_conv , scale_pars = [ [1., 0., 0., 0., 0.],[0. , 1. , 0., 0., 0.],[0., 0. , 1., 0., 0.],[0., 0. , 0., 1., 0.],[0., 0. , 0., 0., 1.]] ):
 	FLIPXY = tf.constant([ [1., 0., 0., 0., 0.],[0. , -1. , 0., 0., 0.],[0., 0. , -1., 0., 0.],[0., 0. , 0., 1., 0.],[0., 0. , 0., 0., 1.]] )
@@ -350,6 +411,5 @@ def cost_tensor(y_conv , scale_pars = [ [1., 0., 0., 0., 0.],[0. , 1. , 0., 0., 
 	scaled_delta_2 = tf.matmul(tf.pow(y_conv_flipped - y_,2) , scale_par_cost)
 	MeanSquareCost = tf.reduce_mean( tf.minimum(tf.reduce_mean( scaled_delta_1 ,axis=1) , tf.reduce_mean(  scaled_delta_2 ,axis=1)) , axis=0)
 	return MeanSquareCost, y_conv_flipped
-
 
 

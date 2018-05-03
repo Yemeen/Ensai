@@ -1,3 +1,12 @@
+# Init Tensorboard stuff. This will save Tensorboard information into a different
+# folder at each run named 'log/<timestamp>/'. Two sets of data are saved so that
+# you can compare training and validation curves visually in Tensorboard.
+timestamp = str(math.trunc(time.time()))
+summary_writer = tf.summary.FileWriter("log/" + timestamp + "-training")
+# validation_writer = tf.summary.FileWriter("log/" + timestamp + "-validation")
+eval_cost = 0
+value_ = tf.placeholder(tf.float32, [])
+eval_summary = tf.summary.scalar("evaluation_cost", value_)
 
 
 ############### OPTIMIZER:
@@ -8,7 +17,7 @@ train_step = tf.train.AdamOptimizer(learning_rate).minimize(MeanSquareCost,var_l
 
 num_batch_samples = 50
 num_iterations = 1
-min_eval_cost = 0.06
+min_eval_cost = 0.2
 X = np.zeros((cycle_batch_size,numpix_side*numpix_side), dtype='float32') ;
 Y = np.zeros((cycle_batch_size,num_out), dtype='float32' );
 MAG = np.zeros((cycle_batch_size,1), dtype='float32' );
@@ -65,7 +74,6 @@ for i_sample in range(1000000):
                         train_cost = sess.run(MeanSquareCost, feed_dict={x:xA, y_: yA} )
 
                         sum_rms = 0
-                        eval_cost = 0
                         num_chunks = 20
                         for it in range(num_chunks):
                                 eval_cost  = eval_cost + sess.run(MeanSquareCost, feed_dict={x: X_test[ind_t[0+50*it:50+50*it]], y_: Y_test[ind_t[0+50*it:50+50*it],:]})
@@ -75,8 +83,8 @@ for i_sample in range(1000000):
                                 sum_rms = sum_rms + np.std(ROT_COR_PARS-Y_test[ind_t[0+50*it:50+50*it],:],axis=0)
                         eval_cost = eval_cost / num_chunks
                         print("mod "+ str(model_num) + ", lr: " + str(learning_rate) + ", "  + np.array_str( sum_rms/num_chunks  ,precision=2) )
-
-
+                        #Summary stuff
+                        
 			# show the iteration number, training cost, validation cost, and the average time per iteration for training
                         print("                                         %0.4d    %0.4d    %0.5f    %0.5f    %0.5f   %0.3f"%(i_sample,i,train_cost,eval_cost,min_eval_cost,(time.time()-start_time)/print_per)) 
                         start_time = time.time()
@@ -86,4 +94,9 @@ for i_sample in range(1000000):
                                 print "done."
                         min_eval_cost = np.minimum(min_eval_cost,eval_cost)
                 sess.run(train_step, feed_dict={x: xA, y_: yA})
+
+                        # log training data for Tensorboard display a mini-batch of sequences (every 50 batches)
+                if n % 50 == 0:
+                        smm = sess.run(eval_summary, feed_dict={value_: eval_cost})
+                        summary_writer.add_summary(smm,n)
 
